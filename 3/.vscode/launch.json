@@ -8,7 +8,7 @@
       "type": "lldb",
       "request": "launch",
       "name": "Debug",
-      "program": "${fileDirname}/build/test_day3",
+      "program": "${workspaceFolder}/build/test_day3",
       "args": [
         "test_input.txt"
       ],
