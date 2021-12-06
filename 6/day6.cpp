@@ -23,7 +23,7 @@ int main(int /*argc*/, char **argv) {
   std::vector<std::string> stringNumbers;
   boost::algorithm::split(stringNumbers, ss.str(), boost::is_any_of(","));
 
-  using uint128_t = boost::multiprecision::uint128_t;
+  using boost::multiprecision::uint128_t;
   std::array<uint128_t, 9> generationBins{};
   std::for_each(stringNumbers.begin(), stringNumbers.end(),
                 [&](const std::string &s) { generationBins[std::stoi(s)]++; });
