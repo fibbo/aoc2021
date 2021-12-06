@@ -33,15 +33,13 @@ int main(int /*argc*/, char **argv) {
     for (size_t j = 0; j < generationBins.size(); j++) {
       if (j == 0) {
         nResets = generationBins[j];
-        generationBins[j] = 0;
       } else {
         uint128_t currentSize = generationBins[j];
-        generationBins[j - 1] += currentSize;
-        generationBins[j] = 0;
+        generationBins[j - 1] = currentSize;
       }
     }
     generationBins[6] += nResets;
-    generationBins[8] += nResets;
+    generationBins[8] = nResets;
   }
   uint128_t populationCount{};
   for (const auto &n : generationBins) {
