@@ -2,13 +2,8 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/trim_all.hpp>
-#include <boost/multiprecision/cpp_int.hpp>
-#include <climits>
-#include <cmath>
-#include <cstddef>
 #include <fstream>
 #include <iostream>
-#include <limits>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -37,22 +32,9 @@ std::string findDisjointChars(std::string str1, std::string str2) {
   return missingCharacters;
 }
 
-enum class Segment {
-  top = 0x0000001,
-  ul = 0x0000010,
-  ur = 0x0000100,
-  mid = 0x0001000,
-  ll = 0x0010000,
-  lr = 0x0100000,
-  bot = 0x1000000,
-};
-
-void removeStringFromVector(std::vector<std::string> &vec, std::string str) {
-  vec.erase(std::remove(vec.begin(), vec.end(), str), vec.end());
-}
-
+// Map encoded digits by length
 std::map<int, std::vector<std::string>>
-getCharsByLength(std::vector<std::string> &strings) {
+getCharsByLength(const std::vector<std::string> &strings) {
   std::map<int, std::vector<std::string>> charsByLength;
   for (const auto &str : strings) {
     charsByLength[str.size()].push_back(str);
@@ -60,54 +42,42 @@ getCharsByLength(std::vector<std::string> &strings) {
   return charsByLength;
 }
 
-int decipherLine(const std::string &line) {
-  std::vector<std::string> entry;
-  boost::algorithm::split(entry, line, boost::is_any_of("|"));
-  std::for_each(entry.begin(), entry.end(),
-                [](auto &s) { boost::algorithm::trim_all(s); });
-  std::vector<std::string> allDigits;
-  boost::algorithm::split(allDigits, entry[0], boost::is_any_of(" "),
-                          boost::token_compress_on);
+uint64_t decipherLine(const std::vector<std::string> &allDigits,
+                      const std::vector<std::string> &output) {
   auto charsByLength = getCharsByLength(allDigits);
+  // Easy access for known digits
   std::array<std::string, 10> stringsToNumbers;
+  // 1, 4, 7 and 8 are have a unique number of segments
+  // and are known immediately
   stringsToNumbers[1] = charsByLength[2][0];
   stringsToNumbers[4] = charsByLength[4][0];
   stringsToNumbers[7] = charsByLength[3][0];
   stringsToNumbers[8] = charsByLength[7][0];
-  for (auto c : {2, 3, 4, 7}) {
-    auto it = charsByLength.find(c);
-    charsByLength.erase(it);
-  }
-  auto topChar = findDisjointChars(stringsToNumbers[1], stringsToNumbers[7])[0];
+  const auto topChar =
+      findDisjointChars(stringsToNumbers[1], stringsToNumbers[7])[0];
 
-  // Find digit 9 and the bottom segment
-  auto brokenNine = stringsToNumbers[4] + topChar;
-  for (auto number : charsByLength[6]) {
+  // Infer 6, 9 and 0
+  const auto brokenNine = stringsToNumbers[4] + topChar;
+  for (const auto &number : charsByLength[6]) {
     if (auto dif = findDisjointChars(number, brokenNine); dif.size() == 1) {
       stringsToNumbers[9] = number;
-      removeStringFromVector(charsByLength[6], number);
-      break;
+    } else if (auto dif = findJointChars(stringsToNumbers[1], number);
+               dif.size() == 2) {
+      stringsToNumbers[0] = number; // This is the 0 digit
+    } else {
+      stringsToNumbers[6] = number;
     }
   }
 
-  for (auto number : charsByLength[6]) { // 6, 0
-    if (auto dif = findJointChars(stringsToNumbers[1], number);
-        dif.size() == 2) {
-      stringsToNumbers[0] = number; // This is the 0 digit
-      removeStringFromVector(charsByLength[6], number);
-      auto number_6 = charsByLength[6][0];
-      stringsToNumbers[6] = number_6;
-      charsByLength.erase(6);
-    }
-  }
-  for (auto number : charsByLength[5]) {
-    auto dif = findDisjointChars(number, stringsToNumbers[6]);
+  // Infer 5, 3 and 2
+  for (const auto &number : charsByLength[5]) {
+    const auto dif = findDisjointChars(number, stringsToNumbers[6]);
     if (dif.size() == 1) {
       // should be number 5
       stringsToNumbers[5] = number;
     } else {
       // should be number 2 or 3
-      auto dif = findJointChars(stringsToNumbers[1], number);
+      const auto dif = findJointChars(stringsToNumbers[1], number);
       if (dif.size() == 2) {
         stringsToNumbers[3] = number;
       } else {
@@ -115,32 +85,34 @@ int decipherLine(const std::string &line) {
       }
     }
   }
-  std::vector<std::string> digits;
-  boost::algorithm::split(digits, entry[1], boost::is_any_of(" "),
-                          boost::token_compress_on);
-  std::for_each(stringsToNumbers.begin(), stringsToNumbers.end(),
-                [&](auto &s) { std::sort(s.begin(), s.end()); });
-  std::for_each(digits.begin(), digits.end(),
-                [&](auto &s) { std::sort(s.begin(), s.end()); });
-  std::string result;
-  for (auto &digit : digits) {
-    for (size_t index = 0; auto &number : stringsToNumbers) {
+
+  uint64_t result{};
+  size_t power = output.size() - 1;
+  for (const auto &digit : output) {
+    for (int index = 0; auto &number : stringsToNumbers) {
       if (findDisjointChars(digit, number).size() == 0) {
-        result += std::to_string(index);
+        result += index * std::pow(10, power--);
         break;
       }
       index++;
     }
   }
-  return std::stoi(result);
+  return result;
 }
-std::vector<std::string> words;
+
 void part2(const std::vector<std::string> &lines) {
   std::vector<std::string> entry;
-  std::map<Segment, char> segmentToChar;
   int sum{0};
   for (const auto &line : lines) {
-    sum += decipherLine(line);
+    std::vector<std::string> entry;
+    boost::algorithm::split(entry, line, boost::is_any_of("|"));
+    std::for_each(entry.begin(), entry.end(),
+                  [](auto &s) { boost::algorithm::trim_all(s); });
+    std::vector<std::string> input;
+    boost::algorithm::split(input, entry[0], boost::is_any_of(" "));
+    std::vector<std::string> output;
+    boost::algorithm::split(output, entry[1], boost::is_any_of(" "));
+    sum += decipherLine(input, output);
   }
   std::cout << sum << std::endl;
 }
@@ -148,22 +120,17 @@ void part2(const std::vector<std::string> &lines) {
 std::map<int, int> lengthMap = {{7, 8}, {4, 4}, {2, 1}, {3, 7}};
 
 void part1(const std::vector<std::string> &lines) {
-  std::vector<int> frequencyCounter(9);
   std::vector<std::string> entry;
+  uint32_t totalCount{0};
   for (auto &line : lines) {
     boost::algorithm::split(entry, line, boost::is_any_of("|"));
     std::vector<std::string> digits;
-    boost::algorithm::split(digits, entry[1], boost::is_any_of(" "),
-                            boost::token_compress_on);
+    boost::algorithm::split(digits, entry[1], boost::is_any_of(" "));
     for (const auto &n : digits) {
       if (lengthMap.find(n.size()) != lengthMap.end()) {
-        frequencyCounter[lengthMap[n.size()]]++;
+        ++totalCount;
       }
     }
-  }
-  uint32_t totalCount{0};
-  for (const auto &n : frequencyCounter) {
-    totalCount += n;
   }
   std::cout << totalCount << std::endl;
 }
@@ -180,8 +147,7 @@ int main(int /*argc*/, char **argv) {
   }
   std::vector<std::string> lines;
   boost::split(lines, ss.str(), boost::is_any_of("\n"));
-  // std::for_each(lines.begin(), lines.end(),
-  // [](std::string &line) { boost::algorithm::trim_all(line); });
+
   part1(lines);
   part2(lines);
   return 0;
