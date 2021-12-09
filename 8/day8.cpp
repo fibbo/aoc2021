@@ -117,8 +117,7 @@ void part2(const std::vector<std::string> &lines) {
   std::cout << sum << std::endl;
 }
 
-std::map<int, int> lengthMap = {{7, 8}, {4, 4}, {2, 1}, {3, 7}};
-
+std::array<int, 4> knownIntegerLengths = {2, 3, 4, 7};
 void part1(const std::vector<std::string> &lines) {
   std::vector<std::string> entry;
   uint32_t totalCount{0};
@@ -127,7 +126,8 @@ void part1(const std::vector<std::string> &lines) {
     std::vector<std::string> digits;
     boost::algorithm::split(digits, entry[1], boost::is_any_of(" "));
     for (const auto &n : digits) {
-      if (lengthMap.find(n.size()) != lengthMap.end()) {
+      if (std::find(knownIntegerLengths.begin(), knownIntegerLengths.end(),
+                    n.size()) != knownIntegerLengths.end()) {
         ++totalCount;
       }
     }
