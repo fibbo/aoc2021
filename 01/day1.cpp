@@ -2,7 +2,7 @@
 #include <iostream>
 #include <stdexcept>
 
-void part_1(std::string fileName) {
+void part1(std::string fileName) {
 
   std::ifstream file(fileName);
   if (file.fail()) {
@@ -49,7 +49,7 @@ std::istream &operator>>(std::ifstream &file, SlidingWindow &sw) {
   return file;
 }
 
-void part_2(const std::string fileName) {
+void part2(const std::string fileName) {
   std::ifstream file(fileName);
   SlidingWindow oldWindow(file);
   SlidingWindow window = oldWindow;
@@ -66,6 +66,6 @@ void part_2(const std::string fileName) {
 
 int main(int argc, char **argv) {
   std::cout << argv[1] << std::endl;
-  part_1(argv[1]);
-  part_2(argv[1]);
+  part1(argv[1]);
+  part2(argv[1]);
 }
