@@ -1,7 +1,9 @@
+#include <algorithm>
 #include <bitset>
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <utility>
 #include <vector>
 
 #if defined(AOC_TEST)

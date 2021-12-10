@@ -1,8 +1,11 @@
 #include <algorithm>
+#include <array>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
+#include <cstdint>
 #include <fstream>
 #include <iostream>
+#include <map>
 #include <sstream>
 #include <stack>
 #include <stdexcept>

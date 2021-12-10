@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <array>
 #include <bitset>
 #include <boost/algorithm/string/classification.hpp>
@@ -8,6 +9,8 @@
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
+#include <string>
+#include <vector>
 
 class BingoBoard {
 public:
@@ -59,7 +62,7 @@ public:
 private:
   std::array<int, 25> board_{};
   std::bitset<25> tagged_{};
-  size_t nTags_{0};
+  uint32_t nTags_{0};
   int remainingBoardScore_{};
   bool alreadySolved_{false};
 };
