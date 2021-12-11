@@ -2,7 +2,6 @@
 #include <boost/algorithm/string/split.hpp>
 #include <fstream>
 #include <iostream>
-#include <queue>
 #include <sstream>
 #include <stdexcept>
 #include <vector>
@@ -91,7 +90,6 @@ int main(int /*argc*/, char **argv) {
   int oldFlashCount = 0;
   int iterations = 1;
   while (true) {
-    std::queue<Octopus *> toFlash;
     for (auto &octopus : grid) {
       ++octopus.energy;
     }
