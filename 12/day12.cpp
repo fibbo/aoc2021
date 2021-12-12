@@ -33,15 +33,32 @@ struct Path {
     if (cave->isSmall) {
       if (containsCave(cave)) {
         visitedSameSmallCaveTwice = true;
+        favoriteSmallCavern = cave->name;
       }
     }
     path.push_back(cave);
   }
+
+  void clear() {
+    path.clear();
+    visitedSameSmallCaveTwice = false;
+    favoriteSmallCavern = "";
+  }
+
   bool containsCave(const Cave *cave) const {
     return std::find(path.begin(), path.end(), cave) != path.end();
   }
+
+  void dropLastPath() {
+    if (path.back()->name == favoriteSmallCavern) {
+      visitedSameSmallCaveTwice = false;
+      favoriteSmallCavern = "";
+    }
+    path.pop_back();
+  }
   std::vector<Cave *> path;
   bool visitedSameSmallCaveTwice = false;
+  std::string favoriteSmallCavern;
 };
 
 bool startOrEnd(const Cave *cave) noexcept {
@@ -59,19 +76,21 @@ inline bool disallowPathPart2(const Cave *currentCave, const Path &path) {
 
 template <typename PathChecker>
 int findPaths(PathChecker &&pathChecker, Cave *currentCave, Cave *endCave,
-              Path path) {
+              Path &path) {
   int nPaths = 0;
   if (pathChecker(currentCave, path)) {
     return 0;
   }
-  Path prePath = path;
-  path.addCave(currentCave);
+
   if (currentCave == endCave) {
     return 1;
   }
+
+  path.addCave(currentCave);
   for (auto *cave : currentCave->adjacent) {
     nPaths += findPaths(pathChecker, cave, endCave, path);
   }
+  path.dropLastPath();
   return nPaths;
 }
 
@@ -109,7 +128,9 @@ int main(int /*argc*/, char **argv) {
     caveA.addNeighbor(&caveB);
     caveB.addNeighbor(&caveA);
   }
-  std::cout << findPaths(disallowPathPart1, start, end, Path{}) << std::endl;
-  std::cout << findPaths(disallowPathPart2, start, end, Path{}) << std::endl;
+
+  Path path;
+  std::cout << findPaths(disallowPathPart1, start, end, path) << std::endl;
+  std::cout << findPaths(disallowPathPart2, start, end, path) << std::endl;
   return 0;
 }
