@@ -3,11 +3,16 @@
 #include <boost/algorithm/string/split.hpp>
 #include <fstream>
 #include <iostream>
-#include <queue>
+#include <map>
 #include <sstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
+
+bool isLower(const std::string &s) {
+  return std::all_of(s.begin(), s.end(),
+                     [](char c) { return std::islower(c); });
+}
 
 struct Cave {
   void addNeighbor(Cave *neighbor) { adjacent.push_back(neighbor); }
@@ -15,13 +20,6 @@ struct Cave {
   bool isSmall;
   std::vector<Cave *> adjacent;
 };
-
-std::map<std::string, Cave> caveMap;
-
-bool isLower(const std::string &s) {
-  return std::all_of(s.begin(), s.end(),
-                     [](char c) { return std::islower(c); });
-}
 
 Cave makeCave(const std::string &name) {
   Cave cave;
@@ -31,8 +29,6 @@ Cave makeCave(const std::string &name) {
 }
 
 struct Path {
-  Path(Cave *cave) { path.push_back(cave); }
-  Path() {}
   void addCave(Cave *cave) {
     if (cave->isSmall) {
       if (containsCave(cave)) {
@@ -41,55 +37,42 @@ struct Path {
     }
     path.push_back(cave);
   }
-  bool containsCave(Cave *cave) const noexcept {
+  bool containsCave(const Cave *cave) const {
     return std::find(path.begin(), path.end(), cave) != path.end();
-  }
-
-  void printPath() const {
-    for (auto cave : path) {
-      std::cout << cave->name << " ";
-    }
-    std::cout << std::endl;
   }
   std::vector<Cave *> path;
   bool visitedSameSmallCaveTwice = false;
 };
 
-bool startOrEnd(Cave *cave) {
+bool startOrEnd(const Cave *cave) noexcept {
   return cave->name == "start" || cave->name == "end";
 }
-bool disallowPathPart1(Cave *currentCave, const Path &path) {
-  if (currentCave->isSmall && path.containsCave(currentCave)) {
-    return true;
-  }
-  return false;
+
+inline bool disallowPathPart1(const Cave *currentCave, const Path &path) {
+  return currentCave->isSmall && path.containsCave(currentCave);
 }
 
-bool disallowPathPart2(Cave *currentCave, const Path &path) {
-  if (disallowPathPart1(currentCave, path) &&
-      (startOrEnd(currentCave) || path.visitedSameSmallCaveTwice)) {
-    return true;
-  }
-  return false;
+inline bool disallowPathPart2(const Cave *currentCave, const Path &path) {
+  return disallowPathPart1(currentCave, path) &&
+         (startOrEnd(currentCave) || path.visitedSameSmallCaveTwice);
 }
 
-template <typename PartChecker>
-void findPath(PartChecker &&fn, Cave *currentCave, Cave *endCave, Path path,
-              int &pathCount) {
-  if (fn(currentCave, path)) {
-    return;
+template <typename PathChecker>
+int findPaths(PathChecker &&pathChecker, Cave *currentCave, Cave *endCave,
+              Path path) {
+  int nPaths = 0;
+  if (pathChecker(currentCave, path)) {
+    return 0;
   }
   Path prePath = path;
   path.addCave(currentCave);
   if (currentCave == endCave) {
-    // path.printPath();
-    pathCount++;
-    return;
+    return 1;
   }
-  for (auto &cave : currentCave->adjacent) {
-    findPath(fn, cave, endCave, path, pathCount);
+  for (auto *cave : currentCave->adjacent) {
+    nPaths += findPaths(pathChecker, cave, endCave, path);
   }
-  return;
+  return nPaths;
 }
 
 int main(int /*argc*/, char **argv) {
@@ -105,6 +88,7 @@ int main(int /*argc*/, char **argv) {
   boost::split(lines, ss.str(), boost::is_any_of("\n"));
   Cave *start = nullptr;
   Cave *end = nullptr;
+  std::map<std::string, Cave> caveMap;
   for (const auto &line : lines) {
     if (line.empty()) {
       continue;
@@ -125,11 +109,7 @@ int main(int /*argc*/, char **argv) {
     caveA.addNeighbor(&caveB);
     caveB.addNeighbor(&caveA);
   }
-  int nPaths = 0;
-  Path path;
-  findPath(disallowPathPart1, start, end, path, nPaths);
-  std::cout << nPaths << std::endl;
-  findPath(disallowPathPart2, start, end, path, nPaths);
-  std::cout << nPaths << std::endl;
+  std::cout << findPaths(disallowPathPart1, start, end, Path{}) << std::endl;
+  std::cout << findPaths(disallowPathPart2, start, end, Path{}) << std::endl;
   return 0;
 }
