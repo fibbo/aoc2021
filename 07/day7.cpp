@@ -31,7 +31,7 @@ int bestFuelCost(const std::vector<int> &crabs, int median) {
   return middle;
 }
 
-int main(int /*argc*/, char **argv) {
+int main(int /*argc*/, char *argv[]) {
   std::stringstream ss;
   {
     std::ifstream file{argv[1]};

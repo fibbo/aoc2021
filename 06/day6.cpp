@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-int main(int /*argc*/, char **argv) {
+int main(int /*argc*/, char *argv[]) {
   std::stringstream ss;
   {
     std::ifstream file{argv[1]};

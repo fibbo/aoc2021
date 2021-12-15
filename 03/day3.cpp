@@ -84,7 +84,7 @@ int calculatePower(const std::vector<std::string> &input) {
   return gammaBits.to_ulong() * epsilonBits.to_ulong();
 }
 
-int main(int /*argc*/, char **argv) {
+int main(int /*argc*/, char *argv[]) {
   std::ifstream fileName(argv[1]);
   std::vector<std::string> input;
   if (!fileName.is_open()) {

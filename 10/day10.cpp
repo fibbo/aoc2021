@@ -72,7 +72,7 @@ void part1And2(const std::vector<std::string> &input) {
   part2(incomplete);
 }
 
-int main(int /*argc*/, char **argv) {
+int main(int /*argc*/, char *argv[]) {
   std::stringstream ss;
   {
     std::ifstream file(argv[1]);

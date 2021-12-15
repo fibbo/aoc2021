@@ -109,7 +109,7 @@ std::vector<BingoBoard> parseBoards(std::vector<std::string> &lines) {
   return boards;
 }
 
-int main(int /*argc*/, char **argv) {
+int main(int /*argc*/, char *argv[]) {
   std::ifstream file(argv[1]);
   auto lines = readFile(argv[1]);
   auto drawnNumbers = parseDrawnNumbers(lines[0]);

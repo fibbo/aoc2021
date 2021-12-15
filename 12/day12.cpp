@@ -94,7 +94,7 @@ int findPaths(PathChecker &&pathChecker, Cave *currentCave, Cave *endCave,
   return nPaths;
 }
 
-int main(int /*argc*/, char **argv) {
+int main(int /*argc*/, char *argv[]) {
   std::stringstream ss;
   {
     std::ifstream file(argv[1]);

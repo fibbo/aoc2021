@@ -98,7 +98,7 @@ struct Grid {
   int height{};
 };
 
-int main(int /*argc*/, char **argv) {
+int main(int /*argc*/, char *argv[]) {
   std::stringstream ss;
   {
     std::fstream file(argv[1]);

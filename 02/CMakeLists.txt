@@ -1,6 +1,18 @@
 cmake_minimum_required(VERSION 3.20)
 
 project(day2)
+set(CMAKE_CXX_STANDARD 20)
+find_package(Boost REQUIRED)
+add_executable(${PROJECT_NAME} day2.cpp)
 
-set(CMAKE_CXX_STANDARD 17)
-add_executable(day2 day2.cpp)
+target_link_libraries(${PROJECT_NAME}
+PRIVATE
+${Boost_LIBRARY_DIRS})
+
+target_include_directories(${PROJECT_NAME}
+PRIVATE
+${Boost_INCLUDE_DIRS})
+target_compile_options(${PROJECT_NAME} PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX>
+  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+)

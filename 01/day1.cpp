@@ -1,8 +1,9 @@
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
+#include <string>
 
-void part1(std::string fileName) {
+void part1(const std::string &fileName) {
 
   std::ifstream file(fileName);
   if (file.fail()) {
@@ -64,7 +65,7 @@ void part2(const std::string fileName) {
   std::cout << "Part 2: " << count << std::endl;
 }
 
-int main(int argc, char **argv) {
+int main(int /*argc*/, char *argv[]) {
   std::cout << argv[1] << std::endl;
   part1(argv[1]);
   part2(argv[1]);

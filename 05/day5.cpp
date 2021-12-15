@@ -94,7 +94,7 @@ void fillArray(const std::vector<Line> &segments) {
   }
 }
 
-int main(int /*argc*/, char **argv) {
+int main(int /*argc*/, char *argv[]) {
   std::ifstream file(argv[1]);
   if (!file.is_open()) {
     throw std::runtime_error("Could not open file");

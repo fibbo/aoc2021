@@ -15,7 +15,7 @@ using PolymerInstructions = std::unordered_map<std::string, std::string>;
 using PolymerPair = std::string;
 using PolymerMap = std::unordered_map<PolymerPair, uint64_t>;
 
-int main(int /*argc*/, char **argv) {
+int main(int /*argc*/, char *argv[]) {
   std::stringstream ss;
   {
     std::ifstream file(argv[1]);

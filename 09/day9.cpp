@@ -91,7 +91,7 @@ void part1(const std::vector<int> &input, const GridSize &gridSize) {
   std::cout << riskLevel << std::endl;
 }
 
-int main(int /*argc*/, char **argv) {
+int main(int /*argc*/, char *argv[]) {
   std::stringstream ss;
   {
     std::ifstream file(argv[1]);

@@ -52,7 +52,7 @@ std::ifstream &operator>>(std::ifstream &file, Command &command) {
   return file;
 }
 
-int main(int argc, char **argv) {
+int main(int /*argc*/, char *argv[]) {
   std::ifstream file(argv[1]);
   Position position{};
   Command command;
