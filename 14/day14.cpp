@@ -1,20 +1,19 @@
 #include <algorithm>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
-#include <boost/multiprecision/cpp_int.hpp>
 #include <fstream>
 #include <iostream>
 #include <map>
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
-using PolymerInstructions = std::map<std::string, std::string>;
+using PolymerInstructions = std::unordered_map<std::string, std::string>;
 
-using boost::multiprecision::uint128_t;
 using PolymerPair = std::string;
-using PolymerMap = std::map<PolymerPair, uint128_t>;
+using PolymerMap = std::unordered_map<PolymerPair, uint64_t>;
 
 int main(int /*argc*/, char **argv) {
   std::stringstream ss;
@@ -50,26 +49,28 @@ int main(int /*argc*/, char **argv) {
       polyCount.emplace(pair, 1);
     }
   }
-
+  std::string poly;
+  poly.resize(2);
   for (int i = 0; i < 40; i++) {
     PolymerMap newPolyCount;
     for (auto &kv : polyCount) {
       auto c = insertionMap[kv.first];
-      std::string poly{kv.first[0] + c};
+      poly = {kv.first[0] + c};
       if (!newPolyCount.contains(poly)) {
         newPolyCount[poly] = 0;
       }
-      newPolyCount[poly] += polyCount[kv.first];
-      poly = std::string{c + kv.first[1]};
+      newPolyCount[poly] += kv.second;
+      poly = {c + kv.first[1]};
       if (!newPolyCount.contains(poly)) {
         newPolyCount[poly] = 0;
       }
-      newPolyCount[poly] += polyCount[kv.first];
+
+      newPolyCount[poly] += kv.second;
     }
     polyCount = newPolyCount;
   }
-  std::map<char, uint128_t> frequencyCount;
-  std::vector<uint128_t> frequencies;
+  std::map<char, uint64_t> frequencyCount;
+  std::vector<uint64_t> frequencies;
   for (size_t index = 0; const auto &kv : polyCount) {
     frequencyCount[kv.first[0]] += kv.second;
     ++index;
@@ -79,8 +80,8 @@ int main(int /*argc*/, char **argv) {
     frequencies.push_back(kv.second);
   }
 
-  uint128_t max = *std::max_element(frequencies.begin(), frequencies.end());
-  uint128_t min = *std::min_element(frequencies.begin(), frequencies.end());
+  uint64_t max = *std::max_element(frequencies.begin(), frequencies.end());
+  uint64_t min = *std::min_element(frequencies.begin(), frequencies.end());
 
   std::cout << max - min << std::endl;
 
