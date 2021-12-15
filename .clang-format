@@ -1,6 +1,7 @@
+# Test
 ---
 Language:        Cpp
-Standard:        Cpp17
+Standard:        c++20
 PointerAlignment: Left  # C++ style
 DerivePointerAlignment: false
 Cpp11BracedListStyle: true
