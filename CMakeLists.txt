@@ -1,0 +1,28 @@
+cmake_minimum_required(VERSION 3.20.0)
+
+set(CMAKE_DISABLE_SOURCE_CHANGES ON)
+set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
+
+project(advent-of-code-2021)
+
+if(CMAKE_CXX_COMPILER_ID MATCHES MSVC)
+  add_compile_options(/W4)
+elseif(CMAKE_CXX_COMPILER_ID MATCHES GNU|Clang)
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+add_subdirectory(01)
+add_subdirectory(02)
+add_subdirectory(03)
+add_subdirectory(04)
+add_subdirectory(05)
+add_subdirectory(06)
+add_subdirectory(07)
+add_subdirectory(08)
+add_subdirectory(09)
+add_subdirectory(10)
+add_subdirectory(11)
+add_subdirectory(12)
+add_subdirectory(13)
+add_subdirectory(14)
+add_subdirectory(15)

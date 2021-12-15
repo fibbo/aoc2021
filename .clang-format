@@ -1,0 +1,124 @@
+---
+Language:        Cpp
+Standard:        Cpp17
+PointerAlignment: Left  # C++ style
+DerivePointerAlignment: false
+Cpp11BracedListStyle: true
+
+# Includes:
+IncludeBlocks:   Preserve
+SortIncludes:    true
+IncludeIsMainRegex: '(_test)?$'
+# Ordering specific to generic
+# Rules are parsed in order top to bottom
+IncludeCategories:
+  - Regex:           '^<gtest/.*\.h.*>'
+    Priority:        5  # Google test headers
+  - Regex:           '^<gsl/.*>'
+    Priority:        9  # C++ guidelines support library
+  - Regex:           '^<boost/.*\.h.*>'
+    Priority:        10  # Boost headers
+  - Regex:           '^<.*/.*\.h.*>'
+    Priority:        4  # Other headers
+  - Regex:           '^<.*\.h>'
+    Priority:        13  # C headers
+  - Regex:           '^<.*>'
+    Priority:        11  # C++ headers
+  - Regex:           '.*\.h'
+    Priority:        1  # Internal package headers
+
+# PP directives:
+IndentPPDirectives: None
+
+# Namespaces:
+NamespaceIndentation: None
+CompactNamespaces: false
+FixNamespaceComments: true
+SortUsingDeclarations: false
+
+# Braces:
+BreakBeforeBraces: Allman
+# BreakBeforeBraces: Stroustrup
+
+# Classes:
+ConstructorInitializerAllOnOneLineOrOnePerLine: false
+BreakConstructorInitializers: BeforeComma
+BreakBeforeInheritanceComma: false
+
+# Functions:
+IndentWrappedFunctionNames: false
+# AlwaysBreak for function parameters:
+# - Keeps important code to the left side.
+# - Does minimal changes, if function is renamed after refactoring.
+AlignAfterOpenBracket: AlwaysBreak
+AllowAllParametersOfDeclarationOnNextLine: true
+BinPackArguments: false
+BinPackParameters: false
+ExperimentalAutoDetectBinPacking: false
+AllowShortFunctionsOnASingleLine: None
+AlwaysBreakAfterReturnType: None
+
+# Templates:
+AlwaysBreakTemplateDeclarations: true
+SpaceAfterTemplateKeyword: true
+
+# Statements:
+KeepEmptyLinesAtTheStartOfBlocks: true
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignEscapedNewlines: Right
+AlignOperands: true
+BreakBeforeBinaryOperators: None
+BreakBeforeTernaryOperators: false
+BreakStringLiterals: true
+AlwaysBreakBeforeMultilineStrings: false
+AllowShortBlocksOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+ForEachMacros:
+  - foreach
+  - BOOST_FOREACH
+SpaceAfterCStyleCast: false
+SpacesInCStyleCastParentheses: false
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeParens: ControlStatements
+SpaceInEmptyParentheses: false
+SpacesInAngles: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+SpacesInContainerLiterals: true
+
+# Switch blocks:
+AllowShortCaseLabelsOnASingleLine: false
+IndentCaseLabels: false
+
+# Comments:
+ReflowComments: true
+AlignTrailingComments: true
+SpacesBeforeTrailingComments: 2
+
+# Layout:
+# It must allow two side-by-side editor windows displaying full line length on a
+# laptop.
+ColumnLimit: 80
+# Allow larger separations of code blocks, e.g. between function definitions:
+MaxEmptyLinesToKeep: 2
+
+# Indentation:
+IndentWidth: 2
+ConstructorInitializerIndentWidth: 4
+ContinuationIndentWidth: 4
+AccessModifierOffset: -2
+TabWidth: 8
+UseTab: Never
+
+# Penalties:
+PenaltyBreakAssignment: 2
+PenaltyBreakBeforeFirstCallParameter: 19
+PenaltyBreakComment: 300
+PenaltyBreakFirstLessLess: 120
+PenaltyBreakString: 1000
+PenaltyExcessCharacter: 1000000
+PenaltyReturnTypeOnItsOwnLine: 6000
+
+DisableFormat:   false
