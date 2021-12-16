@@ -85,7 +85,7 @@ struct Packet
         auto literal = binary.substr(position, 15);
         position += 15;
         // Convert to number
-        uint64_t nBits = calculateDecimal(std::string{literal});
+        uint64_t nBits = calculateDecimal(literal);
         // number = total length in bits of the packages
         uint64_t endBit = position + nBits;
         while (position < endBit)
@@ -101,7 +101,7 @@ struct Packet
         auto literal = binary.substr(position, 11);
         position += 11;
         // Convert to number
-        int nPackages = calculateDecimal(std::string{literal});
+        int nPackages = calculateDecimal(literal);
         int count = 0;
         while (count < nPackages)
         {
